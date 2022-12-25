@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:word_test/main.dart';
 import '../constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/cupertino.dart';
-
+import 'dart:convert';
+import 'dart:core';
+import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 
 class SignupScreen extends StatefulWidget {
@@ -180,6 +184,61 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
       ),);
 
+    void showdialog(text){
+      showDialog(context: context, builder: (BuildContext context){
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0))
+          ,
+          title: Text("Alert"),
+          content: SizedBox(
+            height: 50,
+            child:Column(
+              children: [
+                Text(text)
+              ],
+            ) ,
+          ),
+
+          actions: [
+            TextButton(onPressed: (){
+              Navigator.pop(context);
+            }, child: Text("OK"))
+          ],
+        );
+      });
+
+
+    }
+
+    void showdialog_close(text){
+      showDialog(context: context, builder: (BuildContext context){
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0))
+          ,
+          title: Text("Alert"),
+          content: SizedBox(
+            height: 50,
+            child:Column(
+              children: [
+                Text(text)
+              ],
+            ) ,
+          ),
+
+          actions: [
+            TextButton(onPressed: (){
+              Navigator.pop(context);
+              Navigator.pop(context);
+            }, child: Text("OK"))
+          ],
+        );
+      });
+
+
+    }
+
     //Name
     final nickNameField= TextFormField(
       autofocus: false,
@@ -273,9 +332,12 @@ class _SignupScreenState extends State<SignupScreen> {
         if (value!.isEmpty){
           return("필수 정보입니다.");
         }
+        /*
         if(!regex.hasMatch(value)){
           return ("8~16자 영문자,숫자,툭수문자를 사용하세요.");
         }
+        */
+
         return null;
       },
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -403,7 +465,96 @@ class _SignupScreenState extends State<SignupScreen> {
 
 
 
-                        signUpButton,
+                        Material(
+                          elevation: 5,
+                          borderRadius: BorderRadius.circular(30),
+                          color:Colors.yellow[100],
+                          child: MaterialButton(
+                            padding: EdgeInsets.fromLTRB(20,15,20,15),
+                            minWidth: MediaQuery.of(context).size.width,
+                            onPressed: () async{
+
+
+                            //  print(NameEditingController.text.toString());
+                            // print(passwordEditingController.text.toString());
+                            //  print(phoneNumber.text.toString());
+
+                              var urll = "http://";
+                              var https = context
+                                  .read<server>()
+                                  .http_server_name;
+                              https+="NAME/"+NameEditingController.text.toString();
+                              urll += https;
+                              Uri uri = Uri.parse(urll);
+
+                              Map<String, String> headers = {
+                              'Content-Type': 'application/json'
+                              };
+                              var id_check = await http.get(
+                              uri, headers: headers);
+                              if (id_check.statusCode == 200) {
+                                //이럼있는거 아이디가있음 Aert 메세지
+                                showdialog("ID duplicated \nPlease choose another ID ");
+                              }
+                            else{
+                                 //  print("아이디없음");
+
+                                   var urll = "http://";
+                                   var https = context
+                                       .read<server>()
+                                       .http_server_name;
+                                   urll += https;
+                                   print(urll);
+                                   Uri uri = Uri.parse(urll);
+                                   Map<String, String> headers = {
+                                     'Content-Type': 'application/json'
+                                   };
+
+
+                                   List<List<int>>ku=[];
+                                   List<int>a=[];
+                                   var names="part";
+                                   Map<String,dynamic>body_item={"NAME":NameEditingController.text.toString(),
+                                     "password":passwordEditingController.text.toString(),
+                                     "phone_number":phoneNumber.text.toString(),
+                                     };
+                                   for(var i=0;i<10;i++)
+                                     {
+                                       a.add(0);
+                                     }
+                                   for(var i=1;i<=10;i++)
+                                   {
+                                     var ss=names;
+                                     ss+=i.toString();
+                                     body_item.addAll({ss:a});
+                                   }
+
+
+
+                                   var add_id=await http.post(uri, body: jsonEncode(body_item),headers: headers);
+                                   if(add_id.statusCode==201)
+                                     {
+                                       showdialog_close("Member registration complete!!");
+                                     }
+                                   else
+                                     {
+                                       showdialog("Server ERROR \nCheck your network");
+                                     }
+
+
+                              }
+
+
+
+                            },
+                            child: Text(
+                              "Sign Up",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 20,color:Colors.black87,fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
                         SizedBox(height: 30),
 
                       ],

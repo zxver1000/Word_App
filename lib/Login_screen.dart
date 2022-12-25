@@ -4,6 +4,9 @@ import 'constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import './SinupScreen/SignupScreen.dart';
 import 'package:provider/provider.dart';
+import 'dart:convert';
+import 'dart:core';
+import 'package:http/http.dart' as http;
 class Login_Screen extends StatefulWidget {
   const Login_Screen({Key? key}) : super(key: key);
 
@@ -20,6 +23,42 @@ class _Login_ScreenState extends State<Login_Screen> {
   String userPassword = '';
   bool showSpinner = false;
 
+  Future<int> http_get(var condition,var conditon_val,var password) async{
+    var urll = "http://";
+    var https = context
+        .read<server>()
+        .http_server_name;
+    https+=condition+"/"+conditon_val;
+    urll += https;
+    Uri uri = Uri.parse(urll);
+    Map<String, String> headers = {
+      'Content-Type': 'application/json'
+    };
+    var id_check = await http.get(
+        uri, headers: headers);
+    if (id_check.statusCode == 200) {
+      //이럼있는거 아이디가있음 Aert 메세지
+
+     var data = utf8.decode(id_check.bodyBytes);
+     var k = json.decode(data);
+     //print(k);
+
+     if(k['data'][0]['password']==password)
+       {
+         context.read<loginindex>().login();
+               return 1;
+       }
+     else{
+       showdialog("Error ID or password do not match");
+     }
+
+
+    }
+    else{
+      showdialog("Error ID or password do not match");
+    }
+    return -1;
+  }
   void _tryValidation(){
     final isValid = _formKey.currentState!.validate();
     if(isValid){
@@ -27,7 +66,7 @@ class _Login_ScreenState extends State<Login_Screen> {
     }
   }
 
-  void showdialog(){
+  void showdialog(text){
     showDialog(context: context, builder: (BuildContext context){
       return AlertDialog(
         shape: RoundedRectangleBorder(
@@ -38,7 +77,7 @@ class _Login_ScreenState extends State<Login_Screen> {
           height: 50,
           child:Column(
             children: [
-              Text("등록되지 않은 아이디거나\n비밀번호가 일치하지 않습니다")
+              Text(text)
             ],
           ) ,
         ),
@@ -241,6 +280,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 ),
                                 TextFormField(
                                   keyboardType: TextInputType.emailAddress,
+
                                   key: ValueKey(2),
                                   validator: (value){
                                     if(value!.isEmpty || !value.contains('@')){
@@ -507,9 +547,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                         icon: Icon(Icons.arrow_forward),
                         color: Colors.white,
                         onPressed: ()async{
+                          print(userEmail.toString());
+                          print(userPassword.toString());
+
+                      var idx=http_get("NAME",userEmail,userPassword);
 
 
-                          context.read<loginindex>().login();
 
                         },
                       ),

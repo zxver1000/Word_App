@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 
-
 class InfoScreen extends StatefulWidget {
   const InfoScreen({Key? key}) : super(key: key);
 

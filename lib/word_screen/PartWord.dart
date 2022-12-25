@@ -8,6 +8,8 @@ import 'WordScreen.dart';
 import 'package:bubble/bubble.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'package:http/http.dart' as http;
 class PartWord extends StatefulWidget {
   const PartWord({Key? key,this.title_name}) : super(key: key);
 
