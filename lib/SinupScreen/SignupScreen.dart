@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
 
+
+
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
 
@@ -512,15 +514,20 @@ class _SignupScreenState extends State<SignupScreen> {
 
 
                                    List<List<int>>ku=[];
-                                   List<int>a=[];
+                                   List<dynamic>a=[];
                                    var names="part";
                                    Map<String,dynamic>body_item={"NAME":NameEditingController.text.toString(),
                                      "password":passwordEditingController.text.toString(),
                                      "phone_number":phoneNumber.text.toString(),
                                      };
+                                   Map<String,int>sss={
+                                     "pass":0,
+                                     "try_count":0
+                                   };
+
                                    for(var i=0;i<10;i++)
                                      {
-                                       a.add(0);
+                                       a.add(sss);
                                      }
                                    for(var i=1;i<=10;i++)
                                    {

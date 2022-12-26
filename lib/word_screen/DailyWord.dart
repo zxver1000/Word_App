@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:word_test/constants.dart';
+import 'package:word_test/main.dart';
 
 import 'WordScreen.dart';
 import 'package:bubble/bubble.dart';
@@ -39,7 +40,7 @@ class _DailyWordState extends State<DailyWord> {
             Navigator.push(context,
                 MaterialPageRoute(
                     builder: (context)=>
-                       PartWord(title_name: "Unit "+widget.title_name.toString()+"-"+k.toString(),)));
+                       PartWord(title_name: "Unit "+widget.title_name.toString()+"-"+k.toString(),index: widget.title_name,index2:k)));
 
           },
           child: Padding(padding: EdgeInsets.all(20),
@@ -94,7 +95,8 @@ class _itemState extends State<item> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(color: Colors.black45),
-              color: Colors.yellowAccent[100]
+
+              color: context.watch<user_infodata>().part_datas[widget.title_num-1][widget.num-1].pass==0?Colors.red[200]:Colors.blueAccent[100]
             ),
             width: 10,
             height: 10,
@@ -103,7 +105,7 @@ class _itemState extends State<item> {
 
             Text(widget.num.toString(),style: TextStyle(fontSize: 70,fontWeight: FontWeight.w500),),
 
-            Padding(padding: EdgeInsets.only(top: 20),child: Text("0 / 20"),)
+            Padding(padding: EdgeInsets.only(top: 20),child: context.read<user_infodata>().part_datas[widget.title_num-1][widget.num-1].pass==0?Text("0 / 20"):Text("20/20"),)
 
           ],
         ),

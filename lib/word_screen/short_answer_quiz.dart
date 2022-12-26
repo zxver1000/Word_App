@@ -4,13 +4,15 @@ import 'package:provider/provider.dart';
 import 'package:word_test/constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:bubble/bubble.dart';
-
+import '../main.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-
+import 'dart:math';
 
 class answer_quiz extends StatefulWidget {
-  const answer_quiz({Key? key}) : super(key: key);
+  const answer_quiz({Key? key,this.col,this.row}) : super(key: key);
 
+  final col;
+  final row;
   @override
   State<answer_quiz> createState() => _answer_quizState();
 }
@@ -20,19 +22,130 @@ class _answer_quizState extends State<answer_quiz> {
   final TextEditingController _textController = new TextEditingController();
   StreamController<chatmessage> mesage=StreamController<chatmessage>();
   List<chatmessage> _messages =[];
+   List<word>test_Data=[];
+   List<int>array_int=[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
+   List<int>error_array=[];
+   var cur_index=1;
+  //문제만들기
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    set_test_data(widget.row,widget.col);
+  }
+  void set_test_data(row,col){
 
+    for(var i=0;i<10;i++)
+      {
+      var k=Random().nextInt(20);
+      array_int[i]=k;
+       for(var j=0;j<i;j++)
+         {
+           if(array_int[j]==array_int[i])
+             {
+               i--;
+               break;
+             }
+
+
+         }
+
+      }
+
+    int row_=row-1;
+
+    for(var i=0;i<10;i++)
+      {
+        //print(array_int[i]);
+        test_Data.add(context.read<word_data>().part_data[col-1][array_int[i]+(row_*20)]);
+       // print(test_Data[i].name);
+      }
+
+  }
+
+  void showdialog(correct,wrong,score,pass){
+    showDialog(context: context, builder: (BuildContext context){
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0))
+        ,
+        title: Column(
+          children: [
+            Text("Result"),
+            Divider(color: Colors.black87,)
+          ],
+        ),
+        content: SizedBox(
+          height: 180,
+          child:Column(
+            children: [
+             Padding(padding: EdgeInsets.all(5),
+
+             child: Row(
+               children: [
+                 Text("Correct Answer : "+correct.toString())
+               ],
+             )
+               ,)
+              ,
+              Padding(padding: EdgeInsets.all(5),
+
+                child: Row(
+                  children: [
+                    Text("Wrong Answer : "+wrong.toString())
+                  ],
+                )
+                ,),
+
+              Divider(color: Colors.black87,),
+
+              Padding(padding: EdgeInsets.all(5),
+
+                child: Row(
+                  children: [
+                    Text("Total Score : "+(correct*10).toString())
+                  ],
+                )
+                ,),
+              Padding(padding: EdgeInsets.all(5),
+
+                child: Row(
+                  children: [
+                    Text("Pass or not : "),
+                    Text(pass,style: TextStyle(color: Colors.red),)
+                  ],
+                )
+                ,),
+
+            ],
+          ) ,
+        ),
+
+        actions: [
+          TextButton(onPressed: (){
+            Navigator.pop(context);
+            Navigator.pop(context);
+          }, child: Text("OK"))
+        ],
+      );
+    });
+
+
+  }
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     tts.stop();
   }
-  void _handleSubmitted(String text) {
+  void _handleSubmitted(String text,idx,correct_answer,error_array,row,col) {
     _textController.clear();
+
     var message = chatmessage(
         text: text,
         id:"1"
     );
+
     const String _name = "zur ";
 
     setState(() {
@@ -41,17 +154,68 @@ class _answer_quizState extends State<answer_quiz> {
 
 
     mesage.add(message);
+    var pandn_message;
+    print(correct_answer[idx-1].name);
+    if(correct_answer[idx-1].name==text)
+    {
+      error_array.add(1);
+      pandn_message = chatmessage(
+          text: "Correct Answer",
+          id:"3"
+      );
+    }
+    else
+      {
+        error_array.add(0);
+        pandn_message = chatmessage(
+            text: "Wrong Answer",
+            id:"2"
+        );
+      }
 
-    var pandn_message = chatmessage(
-        text: "Wrong Answer",
-        id:"2"
-    );
-    setState(() {
-      _messages.insert(0, pandn_message);
-    });
 
-    mesage.add(message);
+    if(cur_index<10) {
+      setState(() {
+        _messages.insert(0, pandn_message);
 
+        cur_index++;
+      });
+    }
+    else {
+
+      if (cur_index == 10) {
+        context.read<user_infodata>().add_try_ju(col, row);
+        //다끝남 결과 페이지보여주기
+        var correct_cnt = 0;
+        var error_cnt = 0;
+        var pass = "No";
+        for (var i = 0; i < 10; i++) {
+          if (error_array[i] == 0) {
+            error_cnt++;
+          }
+          else {
+            correct_cnt++;
+          }
+        }
+
+        if (correct_cnt > 8) {
+          pass = "Pass";
+          //패스면 변경->
+
+          context.read<user_infodata>().pass_ju(col, row);
+        }
+
+
+
+        showdialog(correct_cnt, error_cnt, correct_cnt * 10, pass);
+      }
+
+
+
+      mesage.add(message);
+    }
+
+  //  showdialog("hihi");
   }
 
   Widget _buildTextComposer() {
@@ -64,7 +228,7 @@ class _answer_quizState extends State<answer_quiz> {
               Flexible(
                 child: TextField(
                   controller: _textController,
-                  onSubmitted: _handleSubmitted,
+                  onSubmitted: (_)=>_handleSubmitted,
                   decoration: new InputDecoration.collapsed(
                       hintText: "Send Correct Answer"),
                 ),
@@ -73,7 +237,7 @@ class _answer_quizState extends State<answer_quiz> {
                 margin: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: IconButton(
                     icon: Icon(Icons.send),
-                    onPressed: () => _handleSubmitted(_textController.text)),
+                    onPressed: () => _handleSubmitted(_textController.text,cur_index,test_Data,error_array,widget.row,widget.col)),
               ),
             ],
           )
@@ -127,7 +291,7 @@ body:  SingleChildScrollView(
                             children: [
                               Padding(
                                 padding: EdgeInsets.all(5),
-                                child:  Text("Number 1",style: TextStyle(
+                                child:  Text("Number "+cur_index.toString(),style: TextStyle(
                                     fontSize: 15,
                                     color: Colors.black54
 
@@ -135,7 +299,7 @@ body:  SingleChildScrollView(
                                 ,
                               )
                               ,
-                              Padding(padding: EdgeInsets.only(left: 190),child: Text("1/10"),)
+                              Padding(padding: EdgeInsets.only(left: 170),child: Text(cur_index.toString()+"/10"),)
                             ],
                           )
 
@@ -146,21 +310,12 @@ body:  SingleChildScrollView(
                     ],
                   ),
                   Padding(padding: EdgeInsets.only(top: 30),child:
-                  Text("Ansible",style: TextStyle(
-                      fontSize: 30
+                  Text(test_Data[cur_index-1].name,style: TextStyle(
+                      fontSize: 24
                   ),),),
-                  Padding(padding: EdgeInsets.only(top: 12),child:
-                  TextButton(
-                    onPressed: (){
-                      tts.speak("ansible");
 
-                    },
-                    child:   FaIcon(FontAwesomeIcons.volumeUp,color: Colors.blue,)
-                    ,
-                  )
-                    ,)
 
-                  ,
+
 
                 ],
               )

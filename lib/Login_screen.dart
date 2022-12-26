@@ -7,6 +7,16 @@ import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'dart:core';
 import 'package:http/http.dart' as http;
+class user_info{
+  var try_count;
+  var pass;
+
+
+  user_info(this.try_count,this.pass);
+
+
+}
+
 class Login_Screen extends StatefulWidget {
   const Login_Screen({Key? key}) : super(key: key);
 
@@ -24,6 +34,7 @@ class _Login_ScreenState extends State<Login_Screen> {
   bool showSpinner = false;
 
   Future<int> http_get(var condition,var conditon_val,var password) async{
+
     var urll = "http://";
     var https = context
         .read<server>()
@@ -31,6 +42,7 @@ class _Login_ScreenState extends State<Login_Screen> {
     https+=condition+"/"+conditon_val;
     urll += https;
     Uri uri = Uri.parse(urll);
+
     Map<String, String> headers = {
       'Content-Type': 'application/json'
     };
@@ -45,6 +57,88 @@ class _Login_ScreenState extends State<Login_Screen> {
 
      if(k['data'][0]['password']==password)
        {
+
+         //데이터 넣기!!
+         var id=k['data'][0]['NAME'];
+         var pass=k['data'][0]['pasword'];
+         var phone_num=k['data'][0]['phone_number'];
+        List<int>pass_n=[];
+         List<List<part_data>>l1=[[],[],[],[],[],[],[],[],[],[],[]];
+         var idx=0;
+         for(var n1 in k['data'][0]['part1'])
+           {
+             l1[0].add(part_data(n1['try_count'], n1['pass']));
+             idx+=int.parse(n1['pass'].toString());
+           }
+         pass_n.add(idx);
+         idx=0;
+         for(var n1 in k['data'][0]['part2'])
+         {
+           l1[1].add(part_data(n1['try_count'], n1['pass']));
+           idx+=int.parse(n1['pass'].toString());
+         }
+         pass_n.add(idx);
+         idx=0;
+         for(var n1 in k['data'][0]['part3'])
+         {
+           l1[2].add(part_data(n1['try_count'], n1['pass']));
+           idx+=int.parse(n1['pass'].toString());
+         }
+         pass_n.add(idx);
+         idx=0;
+         for(var n1 in k['data'][0]['part4'])
+         {
+           l1[3].add(part_data(n1['try_count'], n1['pass']));
+           idx+=int.parse(n1['pass'].toString());
+         }
+         pass_n.add(idx);
+         idx=0;
+         for(var n1 in k['data'][0]['part5'])
+         {
+           l1[4].add(part_data(n1['try_count'], n1['pass']));
+           idx+=int.parse(n1['pass'].toString());
+         }
+         pass_n.add(idx);
+         idx=0;
+         for(var n1 in k['data'][0]['part6'])
+         {
+           l1[5].add(part_data(n1['try_count'], n1['pass']));
+           idx+=int.parse(n1['pass'].toString());
+         }
+         pass_n.add(idx);
+         idx=0;
+         for(var n1 in k['data'][0]['part7'])
+         {
+           l1[6].add(part_data(n1['try_count'], n1['pass']));
+           idx+=int.parse(n1['pass'].toString());
+         }
+         pass_n.add(idx);
+         idx=0;
+         for(var n1 in k['data'][0]['part8'])
+         {
+           l1[7].add(part_data(n1['try_count'], n1['pass']));
+           idx+=int.parse(n1['pass'].toString());
+         }
+         pass_n.add(idx);
+         idx=0;
+         for(var n1 in k['data'][0]['part9'])
+         {
+           l1[8].add(part_data(n1['try_count'], n1['pass']));
+           idx+=int.parse(n1['pass'].toString());
+         }
+         pass_n.add(idx);
+         idx=0;
+         for(var n1 in k['data'][0]['part10'])
+         {
+           l1[9].add(part_data(n1['try_count'], n1['pass']));
+           idx+=int.parse(n1['pass'].toString());
+         }
+         pass_n.add(idx);
+         idx=0;
+
+      context.read<user_infodata>().set_info(id, phone_num, pass, l1,pass_n);
+
+         print(context.read<user_infodata>().pass_num);
          context.read<loginindex>().login();
                return 1;
        }
@@ -551,7 +645,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                           print(userPassword.toString());
 
                       var idx=http_get("NAME",userEmail,userPassword);
-
 
 
                         },

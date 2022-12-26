@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:word_test/constants.dart';
+import 'package:word_test/main.dart';
 import 'short_answer_quiz.dart';
 import 'Multiple_choice_quiz.dart';
 import 'WordScreen.dart';
@@ -11,15 +12,19 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:http/http.dart' as http;
 class PartWord extends StatefulWidget {
-  const PartWord({Key? key,this.title_name}) : super(key: key);
+  const PartWord({Key? key,this.title_name,this.index,this.index2}) : super(key: key);
 
   final title_name;
+  final index;
+  final index2;
   @override
   State<PartWord> createState() => _PartWordState();
 }
 enum TtsState { playing, stopped, paused, continued }
 class _PartWordState extends State<PartWord> with SingleTickerProviderStateMixin {
   final FlutterTts tts = FlutterTts();
+  var ju_try=0;
+  var gack_try=0;
   double size=175;
   var index=1;
   var k="";
@@ -32,6 +37,7 @@ class _PartWordState extends State<PartWord> with SingleTickerProviderStateMixin
 
     tts.setLanguage('en');
     tts.setSpeechRate(0.4);
+
     tab=TabController(
       length: 2,
       vsync: this,
@@ -70,9 +76,9 @@ class _PartWordState extends State<PartWord> with SingleTickerProviderStateMixin
                 children: [
                   ListView.builder(itemBuilder: (BuildContext context,int index)
                 {
-                return word_item(item_num:index+1);
+                return word_item(item_num:index+1,title_num:widget.title_name,index: widget.index,col: widget.index,row: widget.index2);
                 }
-                  ,itemCount: 20,
+                  ,itemCount:20,
 
                   )
 
@@ -82,11 +88,11 @@ class _PartWordState extends State<PartWord> with SingleTickerProviderStateMixin
                   {
                     if(index==0)
                       {
-                        return test_ui(title_name:"Multiple Choice Quiz");
+                        return test_ui(title_name:"Multiple Choice Quiz",index:index,col: widget.index,row: widget.index2,);
                       }
                     else
                       {
-                        return test_ui(title_name:"Short Answer Quiz");
+                        return test_ui(title_name:"Short Answer Quiz",index:index,col:widget.index,row: widget.index2,);
                       }
 
                   }
@@ -105,8 +111,12 @@ class _PartWordState extends State<PartWord> with SingleTickerProviderStateMixin
 }
 
 class word_item extends StatefulWidget {
-  const word_item({Key? key,this.item_num}) : super(key: key);
+  const word_item({Key? key,this.item_num,this.title_num,this.index,this.col,this.row}) : super(key: key);
  final item_num;
+ final index;
+ final title_num;
+ final col;
+ final row;
   @override
   State<word_item> createState() => _word_itemState();
 }
@@ -179,14 +189,14 @@ class _word_itemState extends State<word_item> {
                 child: star_index==0?FaIcon(FontAwesomeIcons.star,size: 18,color: Colors.yellow,):FaIcon(FontAwesomeIcons.solidStar,size: 18,color: Colors.yellow,),),)
 
             ],),
-            Text("Ansible",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 30),),
+            Text(context.read<word_data>().part_data[widget.col-1][widget.item_num-1+(widget.row-1)*20].name,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 30),),
 
             Row(
               children: [
                 Padding(padding: EdgeInsets.all(10),
                     child: TextButton(
                         onPressed: (){
-                          tts.speak("ansible");
+                          tts.speak(context.read<word_data>().part_data[widget.col-1][widget.item_num-1+(widget.row-1)*20].name);
                         },child: FaIcon(FontAwesomeIcons.volumeUp,color: Colors.black54,)
                     )),
                 Padding(padding: EdgeInsets.only(left: 200),
@@ -212,7 +222,7 @@ class _word_itemState extends State<word_item> {
 
 
 
-            index==0? Text("안녕하세요",
+            index==0? Text(context.read<word_data>().part_data[widget.col-1][widget.item_num-1+(widget.row-1)*20].mean,
               style: TextStyle(fontSize: 16),):Text("")
           ],
         )
@@ -223,13 +233,70 @@ class _word_itemState extends State<word_item> {
 }
 
 class test_ui extends StatefulWidget {
-  const test_ui({Key? key,this.title_name}) : super(key: key);
+  const test_ui({Key? key,this.title_name,this.index,this.col,this.row}) : super(key: key);
 final title_name;
+final index;
+final col;
+final row;
   @override
   State<test_ui> createState() => _test_uiState();
 }
 
 class _test_uiState extends State<test_ui> {
+
+  String set_numexam(index,row,col)
+  {
+    var s;
+  if(index==0)
+      {
+
+
+      context.read<user_infodata>().add_try_gack(widget.col, widget.row);
+      s=context.read<user_infodata>().part_datas[widget.col-1][widget.row-1].try_count_mul.toString();
+      }
+    else
+      {
+
+        context.read<user_infodata>().add_try_ju(widget.col, widget.row);
+        s=context.read<user_infodata>().part_datas[widget.col-1][widget.row-1].try_count_ju.toString();
+      }
+
+
+    return s;
+  }
+String set_passexam(index,row,col)
+{
+  var s;
+  if(index==0)
+  {
+    s=context.watch<user_infodata>().part_datas[widget.col-1][widget.row-1].pass_mul;
+   if(s==0)
+     {
+       return "NO";
+     }
+   else
+     {
+       return "Yes";
+     }
+
+  }
+  else
+  {
+    s=context.watch<user_infodata>().part_datas[widget.col-1][widget.row-1].pass_ju;
+    if(s==0)
+    {
+      return "NO";
+    }
+    else
+    {
+      return "Yes";
+    }
+  }
+
+
+  return "";
+}
+
   final signUpButton = Material(
     elevation: 5,
     borderRadius: BorderRadius.circular(30),
@@ -288,7 +355,7 @@ class _test_uiState extends State<test_ui> {
                   fontWeight:FontWeight.w400,
                   fontSize: 18
                 ),),),
-              Text("1",style: TextStyle(
+              Text(widget.index==0?context.watch<user_infodata>().part_datas[widget.col-1][widget.row-1].try_count_mul.toString():context.watch<user_infodata>().part_datas[widget.col-1][widget.row-1].try_count_ju.toString(),style: TextStyle(
                   fontWeight:FontWeight.w400,
                   fontSize: 18
               ))
@@ -301,7 +368,7 @@ class _test_uiState extends State<test_ui> {
               Text("Number of questions : ",style: TextStyle(
                   fontWeight:FontWeight.w400,
                   fontSize: 18
-              )),),Text("20",style: TextStyle(
+              )),),Text("10",style: TextStyle(
                   fontWeight:FontWeight.w400,
                   fontSize: 18
               ))
@@ -313,7 +380,7 @@ class _test_uiState extends State<test_ui> {
               Text("Pass exam : ",style: TextStyle(
                   fontWeight:FontWeight.w400,
                   fontSize: 18
-              )),),Text("NO",style: TextStyle(
+              )),),Text(set_passexam(widget.index,widget.row-1,widget.col-1),style: TextStyle(
                   fontWeight:FontWeight.w400,
                   fontSize: 18
               ))
@@ -333,14 +400,14 @@ class _test_uiState extends State<test_ui> {
                    Navigator.push(context,
                        MaterialPageRoute(
                            builder: (context)=>
-                               multi_quiz()));
+                               multi_quiz(row: widget.row,col: widget.col,)));
                  }
                else
                  {
                    Navigator.push(context,
                        MaterialPageRoute(
                            builder: (context)=>
-                               answer_quiz()));
+                               answer_quiz(row: widget.row,col: widget.col)));
                  }
 
               },

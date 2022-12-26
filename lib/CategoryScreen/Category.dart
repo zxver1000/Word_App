@@ -21,7 +21,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         String json = await rootBundle.loadString('assets/word.txt');
         //  print(json);
 
-        final k = json.split('\n');
+        final k = json.split('\r\n');
         var idx = 0;
         var name;
         var word;
@@ -79,10 +79,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
           idx++;
 
 
-          if (idx % 400 == 0 && idx != 0) {
+          if (idx % 420 == 0 && idx != 0) {
             var Names = 'part';
             Names += next_idx.toString();
-            Map<String, String> headers = {'Content-Type': 'application/json'};
+            Map<String, String> headers = {'Content-Type': 'application/json; charset=utf-8'};
           // print(Names);
             // var ak=await http.get(uri,headers:headers);
 
