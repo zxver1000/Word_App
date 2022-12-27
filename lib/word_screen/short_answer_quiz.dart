@@ -310,7 +310,7 @@ body:  SingleChildScrollView(
                     ],
                   ),
                   Padding(padding: EdgeInsets.only(top: 30),child:
-                  Text(test_Data[cur_index-1].name,style: TextStyle(
+                  Text(test_Data[cur_index-1].mean,style: TextStyle(
                       fontSize: 24
                   ),),),
 
