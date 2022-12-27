@@ -58,6 +58,7 @@ MongoDb,mysql,firestore과 연동하여 server를 구축 할수있습니다.
 ---
 
 ## **🛠** 3-Tier Architecture
+![ss](https://user-images.githubusercontent.com/78923992/209632688-5c1514b0-f0c9-4f4d-91e4-f3b08bad8346.PNG)
 
 
 ## **🧩**Docker Deploy
