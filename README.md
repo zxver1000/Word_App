@@ -62,11 +62,9 @@ MongoDb,mysql,firestore과 연동하여 server를 구축 할수있습니다.
 
 
 ## **🧩**Docker Deploy
+![kk](https://user-images.githubusercontent.com/78923992/209632971-4b97eac5-8eb0-4489-94fa-02ba0f99ed32.PNG)
 
 
----
-
-# WireFrame
 
 
 
