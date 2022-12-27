@@ -12,9 +12,9 @@ Mapi를 활용한 간단한 영어단어장 App입니다.
 
 ## **🧩 프로젝트 사용 방법**
 
-프로젝트의 사용 과정은  위키를 통해 확인하실 수 있습니다.
+프로젝트의 사용 과정은 노션 통해 확인하실 수 있습니다.
 
-**[Wiki]**(https://www.notion.so/wiki-aa5968d79b674098818bed2b78fa3d4a)
+🧩[Notion](https://occipital-dance-e20.notion.site/Word_voca-48daca9a054f48a1b670bb26686a898c)
 
 ## **✍️ 파트**
 
@@ -63,10 +63,6 @@ MongoDb,mysql,firestore과 연동하여 server를 구축 할수있습니다.
 
 ## **🧩**Docker Deploy
 ![kk](https://user-images.githubusercontent.com/78923992/209632971-4b97eac5-8eb0-4489-94fa-02ba0f99ed32.PNG)
-
-
-## Notion Link
-[Notion](https://occipital-dance-e20.notion.site/Word_voca-48daca9a054f48a1b670bb26686a898c)
 
 
 
