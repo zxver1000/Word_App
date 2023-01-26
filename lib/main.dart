@@ -7,10 +7,15 @@ import 'package:provider/provider.dart';
 import 'package:word_test/Login_screen.dart';
 import 'dart:convert';
 import 'dart:core';
+import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:native_flutter_proxy/custom_proxy.dart';
 import 'package:native_flutter_proxy/custom_proxy_override.dart';
 import 'package:native_flutter_proxy/native_proxy_reader.dart';
+import 'package:http_proxy_override/http_proxy_override.dart';
+
+
+
 class word{
   String name;
   String mean;
@@ -133,9 +138,15 @@ class loginindex extends ChangeNotifier{
 }
 
 void main() async{
-
+  WidgetsFlutterBinding.ensureInitialized();
+  HttpProxyOverride httpProxyOverride =
+  await HttpProxyOverride.createHttpProxy();
+  httpProxyOverride.port="3000";
+  httpProxyOverride.host="192.168.0.5";
+  HttpOverrides.global = httpProxyOverride;
 
   runApp(
+
       MultiProvider(providers: [
         ChangeNotifierProvider(create: (c)=>loginindex()),
         ChangeNotifierProvider(create: (c)=>server()),
