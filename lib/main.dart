@@ -8,6 +8,9 @@ import 'package:word_test/Login_screen.dart';
 import 'dart:convert';
 import 'dart:core';
 import 'package:flutter/services.dart';
+import 'package:native_flutter_proxy/custom_proxy.dart';
+import 'package:native_flutter_proxy/custom_proxy_override.dart';
+import 'package:native_flutter_proxy/native_proxy_reader.dart';
 class word{
   String name;
   String mean;
@@ -28,6 +31,7 @@ class server extends ChangeNotifier{
 
  void setserver(ss){
    http_server_name=ss;
+   notifyListeners();
 }
 }
 
@@ -128,7 +132,9 @@ class loginindex extends ChangeNotifier{
 
 }
 
-void main() {
+void main() async{
+
+
   runApp(
       MultiProvider(providers: [
         ChangeNotifierProvider(create: (c)=>loginindex()),
@@ -162,7 +168,8 @@ class _MyAppState extends State<MyApp> {
 
     context.read<server>().setserver(jsonResponse['server']);
 
-
+ print(context.read<server>().http_server_name);
+ print("kkk");
 
 
 

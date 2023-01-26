@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import './SinupScreen/SignupScreen.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'dart:core';
 import 'package:http/http.dart' as http;
 class user_info{
@@ -32,6 +33,7 @@ class _Login_ScreenState extends State<Login_Screen> {
   String userEmail = '';
   String userPassword = '';
   bool showSpinner = false;
+
 
   Future<int> http_get(var condition,var conditon_val,var password) async{
 
@@ -188,6 +190,24 @@ class _Login_ScreenState extends State<Login_Screen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+   set_ser();
+
+  }
+
+  void set_ser()async{
+    String json=await rootBundle.loadString('assets/server.json');
+
+    final jsonResponse = jsonDecode(json);
+
+    context.read<server>().setserver(jsonResponse['server']);
+    print("로그인");
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
     backgroundColor: Colors.yellow[100],
@@ -265,6 +285,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                   padding: EdgeInsets.only(bottom: 20),
                   child: Column(
                     children: [
+                      Text(context.read<server>().http_server_name.toString()),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
