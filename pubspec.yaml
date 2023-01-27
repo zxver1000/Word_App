@@ -45,7 +45,7 @@ dev_dependencies:
   bubble: ^1.2.1
   flutter_tts: ^3.6.2
   native_flutter_proxy: ^0.1.15
-  http_proxy_override: ^1.0.0
+  h0
   http: ^0.13.5
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
